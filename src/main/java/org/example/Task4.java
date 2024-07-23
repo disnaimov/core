@@ -40,9 +40,11 @@ public class Task4 {
 
     static class OutOfMemory3 {
         public static void main(String[] args) {
-            int a = 2^32;
-            a = a+100000;
-            System.out.println(a);
+            try {
+                int[] array = new int[Integer.MAX_VALUE];
+            } catch (OutOfMemoryError e) {
+                System.out.println("Out of memory " + e);
+            }
         }
     }
 }
