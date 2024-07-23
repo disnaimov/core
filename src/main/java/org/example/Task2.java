@@ -29,6 +29,8 @@ public class Task2 {
             sum += profit;
         }
 
+        sum = Math.round(sum * 100.0) / 100.0;
+
         System.out.println("Sum is " + sum);
 
         scanner.close();
