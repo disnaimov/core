@@ -1,7 +1,11 @@
 package org.example.stage2;
 
 import java.util.HashSet;
-
+/*
+Есть большая коллекция номеров телефонов. Необходимо реализовать метод, который будет проверять,
+есть ли указываемый номер телефона в этой коллекции.
+Для реализации необходимо выбрать наиболее подходящий тип коллекции.
+ */
 public class Task2 {
 
    private static boolean checkNumber(HashSet<String> phoneNumbers,String number) {
