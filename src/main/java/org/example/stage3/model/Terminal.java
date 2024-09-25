@@ -2,9 +2,22 @@ package org.example.stage3.model;
 
 import org.example.stage3.enums.Cargo;
 
-public record Terminal(Cargo cargo) {
+public class Terminal {
+    private final Cargo cargo;
+    private boolean isBusy = false;
 
-    public synchronized void unload(Plane plane) {
+    public Terminal(Cargo cargo) {
+        this.cargo = cargo;
+    }
+
+    public Cargo cargo() {
+        return cargo;
+    }
+
+    public synchronized void unload(Plane plane) throws InterruptedException {
+        while (isBusy) {
+            wait(); // Ждем, пока терминал не освободиться
+        }
 
         System.out.println("Самолет " + plane + " с грузом " + plane.getCargo() + " имеет начальную загруженность: " + plane.getLoaded());
 
@@ -22,6 +35,11 @@ public record Terminal(Cargo cargo) {
             plane.setLoaded(newLoad);
             System.out.println("Самолет " + plane + " с грузом " + plane.getCargo() + " Разгружается, текущая загруженность " + plane.getLoaded());
         }
+
+
+        Thread.sleep(2000);
+        isBusy = false;
+        notifyAll(); // Освободили терминал и уведомили об этом
 
         // После того как разгрузка завершена
         System.out.println("Самолет " + plane + " с грузом " + plane.getCargo() + " разгружен");

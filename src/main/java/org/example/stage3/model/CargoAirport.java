@@ -20,23 +20,15 @@ public class CargoAirport {
     }
 
     public void landPlane(Plane plane) throws InterruptedException {
-        synchronized (lock) {
-            while (!isRunning || isTerminalBusy) {
-                lock.wait(); // Ждем когда освободится терминал || когда заработает аэропорт
-            }
-
-            isTerminalBusy = true; // Занимаем терминал
-        }
-
-        // Получаем нужный нам терминал и разгружаем самолет
+        // Получаем терминал для разгрузки
         Terminal terminalByCargo = getTerminalByCargo(plane.getCargo());
-        terminalByCargo.unload(plane);
-
-        synchronized (lock) {
-            isTerminalBusy = false;
-            lock.notifyAll(); // Оповещаем всех что терминал освободился
+        if (terminalByCargo != null) {
+            terminalByCargo.unload(plane); // Параллельная разгрузка, если терминал свободен
+        } else {
+            System.out.println("Нет доступного терминала для груза: " + plane.getCargo());
         }
     }
+
 
     public Terminal getTerminalByCargo(Cargo cargo) {
         return terminals.stream()   // Получаем нужный нам терминал под переданный тип груза

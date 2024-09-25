@@ -7,6 +7,11 @@ public class PlaneArrival implements Runnable{
     private CargoAirport airport;
     private Plane plane;
 
+    public PlaneArrival(CargoAirport airport, Plane plane) {
+        this.airport = airport;
+        this.plane = plane;
+    }
+
     @Override
     public void run() {
         try {
