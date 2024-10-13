@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: core
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/planes
+    username: postgres
+    password: 1
+    driver-class-name: org.postgresql.Driver
+
+app:
+    total-size: 10
