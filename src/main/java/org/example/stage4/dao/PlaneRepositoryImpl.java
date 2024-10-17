@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
-public class PlaneRepositoryImpl implements PlaneRepository{
+public class PlaneRepositoryImpl implements PlaneRepository {
     private final List<Plane> planes;
 
     public PlaneRepositoryImpl() {

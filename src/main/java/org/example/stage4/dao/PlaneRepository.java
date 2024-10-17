@@ -11,8 +11,12 @@ import java.util.List;
 @Repository
 public interface PlaneRepository {
     List<Plane> getAllPlanes();
+
     int getQuantityPlanesByPlaneType(PlaneType type);
+
     List<Plane> getPlanesByPlaneType(PlaneType type);
+
     Plane getPlaneByPlaneTypeAndCapacity(PlaneType type, int capacity);
+
     void updatePlaneStatus(Long id, PlaneStatus status, PlaneType type);
 }

@@ -7,6 +7,7 @@ import org.example.stage4.enums.PlaneStatus;
 import org.example.stage4.enums.PlaneType;
 
 import java.time.LocalDateTime;
+
 @Getter
 @AllArgsConstructor
 public class Plane {

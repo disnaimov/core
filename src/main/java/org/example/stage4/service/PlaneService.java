@@ -15,9 +15,34 @@ import java.util.NoSuchElementException;
 @Service
 @RequiredArgsConstructor
 public class PlaneService {
+
     private final PlaneRepository planeRepository;
     @Value("${app.total-size}")
     private int totalSize;
+
+    public void method(PlaneType type, int totalSize) {
+        List<Plane> planes = planeRepository.getPlanesByPlaneType(type); // получаем все самолеты по переданному типу
+
+        planes.stream()
+                .filter(plane -> plane.getStatus() == PlaneStatus.SERVICE)
+                .forEach(plane -> {
+                    plane.setStatus(PlaneStatus.WAITING_SERVICE);
+                    plane.setTechnicalDate(LocalDateTime.now());
+                });
+
+        long flight = planes.stream() // число всех кто в полете
+                .filter(plane -> plane.getStatus() == PlaneStatus.FLIGHT)
+                .count();
+
+        long threshold = planes.size() / 2; // допустимый порог
+
+        if (flight < threshold) {
+            planes.stream()
+                    .filter(plane -> plane.getStatus() == PlaneStatus.WAITING_SERVICE)
+                    .limit(totalSize) // лимит из конфгиа
+                    .forEach(plane -> plane.setStatus(PlaneStatus.SERVICE));
+        }
+    }
 
     public void sendProduct(int capacity, PlaneType planeType) {
         Plane plane = planeRepository.getPlaneByPlaneTypeAndCapacity(planeType, capacity); // ищем подходящий самолет
@@ -34,66 +59,14 @@ public class PlaneService {
                 .filter(plane -> plane.getId().equals(id))
                 .findFirst()
                 .ifPresentOrElse(plane -> {
-                    if (plane.getStatus() == PlaneStatus.FLIGHT) { // Проверить статус
+                    if (plane.getStatus() == PlaneStatus.FLIGHT) { // проверить статус
                         plane.setCapacity(0); // Обнуляем груз
-                        plane.setStatus(PlaneStatus.WAITING_SERVICE); // Изменяем статус на "ожидает"
+                        plane.setStatus(PlaneStatus.WAITING_SERVICE); // изменяем статус на "ожидает"
                     } else {
-                        throw new IllegalStateException("Plane must be in flight to be registered!"); // Исключение
+                        throw new IllegalStateException("Plane must be in flight to be registered!"); // исключение
                     }
                 }, () -> {
-                    throw new NoSuchElementException("Plane with id " + id + " does not exist."); // Исключение, если самолет не найден
+                    throw new NoSuchElementException("Plane with id " + id + " does not exist."); // исключение, если самолет не найден
                 });
-    }
-
-    public void technicalService() {
-        List<Plane> cargoPlanes = planeRepository.getPlanesByPlaneType(PlaneType.CARGO); // получаем все грузовые самолеты
-        List<Plane> passengerPlanes = planeRepository.getPlanesByPlaneType(PlaneType.PASSENGER); // получаем все пассажирские самолеты
-
-        cargoPlanes.stream()
-                .filter(plane -> plane.getStatus() == PlaneStatus.SERVICE)
-                .forEach(plane -> {
-                    plane.setStatus(PlaneStatus.WAITING_SERVICE); // Изменяем статус на "ожидает"
-                    plane.setTechnicalDate(LocalDateTime.now()); // Обновляем technicalDate
-                });
-
-        long flightCount = cargoPlanes.stream() // кол-о грузовых самолетов со статусом в полете
-                .filter(plane -> plane.getStatus() == PlaneStatus.FLIGHT)
-                .count();
-
-        long totalCount = cargoPlanes.size(); // количество грузовых самолетов
-        long threshold = totalCount / 2; // допустимый порог
-
-        if (flightCount < threshold) {
-            cargoPlanes.stream()
-                    .filter(plane -> plane.getStatus() == PlaneStatus.WAITING_SERVICE)
-                    .limit(totalSize)
-                    .forEach(plane ->
-                            plane.setStatus(PlaneStatus.SERVICE)
-                            );
-        }
-
-        // Повторяем для пассажирских
-        passengerPlanes.stream()
-                .filter(plane -> plane.getStatus() == PlaneStatus.SERVICE)
-                .forEach(plane -> {
-                    plane.setStatus(PlaneStatus.WAITING_SERVICE); // Изменяем статус на "ожидает"
-                    plane.setTechnicalDate(LocalDateTime.now()); // Обновляем technicalDate
-                });
-
-        flightCount = passengerPlanes.stream() // кол-о пассажирских самолетов со статусом в полете
-                .filter(plane -> plane.getStatus() == PlaneStatus.FLIGHT)
-                .count();
-
-        totalCount = passengerPlanes.size(); // количество пассажиских самолетов
-        threshold = totalCount / 2; // допустимый порог
-
-        if (flightCount < threshold) {
-            passengerPlanes.stream()
-                    .filter(plane -> plane.getStatus() == PlaneStatus.WAITING_SERVICE)
-                    .limit(totalSize)
-                    .forEach(plane ->
-                            plane.setStatus(PlaneStatus.SERVICE)
-                    );
-        }
     }
 }
