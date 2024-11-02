@@ -1,14 +1,14 @@
-package stage4.service;
+package stage4.service.impl;
 
 import org.example.stage4.dao.PlaneRepository;
 import org.example.stage4.enums.PlaneStatus;
 import org.example.stage4.enums.PlaneType;
 import org.example.stage4.model.Plane;
 import org.example.stage4.service.PlaneService;
+import org.example.stage4.service.impl.PlaneServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -23,30 +23,54 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PlaneServiceTest {
+public class PlaneServiceImplTest {
     private List<Plane> planes;
-    @InjectMocks
+
     PlaneService planeService;
     @Mock
     private PlaneRepository planeRepository;
 
     @BeforeEach
     void setUp() {
+        int totalSize = 5;
         MockitoAnnotations.openMocks(this);
-        planeService = new PlaneService(planeRepository);
+        planeService = new PlaneServiceImpl(planeRepository, totalSize);
         planes = new ArrayList<>();
 
-        planes.add(new Plane(1L, 200, PlaneType.PASSENGER, LocalDateTime.now().minusMonths(6), PlaneStatus.FLIGHT));
-        planes.add(new Plane(2L, 300, PlaneType.PASSENGER, LocalDateTime.now().minusMonths(12), PlaneStatus.WAITING_SERVICE));
-        planes.add(new Plane(3L, 400, PlaneType.PASSENGER, LocalDateTime.now().minusMonths(6), PlaneStatus.SERVICE));
-        planes.add(new Plane(4L, 500, PlaneType.PASSENGER, LocalDateTime.now().minusMonths(12), PlaneStatus.WAITING_SERVICE));
-        ;
+        planes.add(Plane.builder()
+                .id(1L)
+                .capacity(200)
+                .type(PlaneType.PASSENGER)
+                .technicalDate(LocalDateTime.now().minusMonths(6))
+                .status(PlaneStatus.FLIGHT)
+                .build());
+        planes.add(Plane.builder()
+                .id(2L)
+                .capacity(300)
+                .type(PlaneType.PASSENGER)
+                .technicalDate(LocalDateTime.now().minusMonths(12))
+                .status(PlaneStatus.WAITING_SERVICE)
+                .build());
+        planes.add(Plane.builder()
+                .id(3L)
+                .capacity(400)
+                .type(PlaneType.PASSENGER)
+                .technicalDate(LocalDateTime.now().minusMonths(6))
+                .status(PlaneStatus.SERVICE)
+                .build());
+        planes.add(Plane.builder()
+                .id(4L)
+                .capacity(500)
+                .type(PlaneType.PASSENGER)
+                .technicalDate(LocalDateTime.now().minusMonths(12))
+                .status(PlaneStatus.WAITING_SERVICE)
+                .build());
     }
 
     @Test
     public void testMethod_UpdatesServicePlanes() {
         when(planeRepository.getPlanesByPlaneType(PlaneType.PASSENGER)).thenReturn(planes);
-        planeService.method(PlaneType.PASSENGER, 5);
+        planeService.technicalService(PlaneType.PASSENGER);
         assertEquals(PlaneStatus.SERVICE, planes.get(2).getStatus());
     }
 

@@ -1,6 +1,6 @@
-package stage4.dao;
+package stage4.dao.impl;
 
-import org.example.stage4.dao.PlaneRepositoryImpl;
+import org.example.stage4.dao.impl.PlaneRepositoryImpl;
 import org.example.stage4.enums.PlaneStatus;
 import org.example.stage4.enums.PlaneType;
 import org.example.stage4.model.Plane;
@@ -24,7 +24,7 @@ public class PlaneRepositoryTest {
     @Test
     void testGetAllPlanes() {
         List<Plane> planes = planeRepository.getAllPlanes();
-        assertEquals(10, planes.size());
+        assertEquals(11, planes.size());
     }
 
     @Test
@@ -33,7 +33,7 @@ public class PlaneRepositoryTest {
         int cargoCount = planeRepository.getQuantityPlanesByPlaneType(PlaneType.CARGO);
 
         assertEquals(6, passengerCount, "Should return 6 passenger planes");
-        assertEquals(4, cargoCount, "Should return 4 cargo planes");
+        assertEquals(5, cargoCount, "Should return 5 cargo planes");
     }
 
     @Test
@@ -42,7 +42,7 @@ public class PlaneRepositoryTest {
         assertEquals(6, passengerPlanes.size(), "Should return 6 passenger planes");
 
         List<Plane> cargoPlanes = planeRepository.getPlanesByPlaneType(PlaneType.CARGO);
-        assertEquals(4, cargoPlanes.size(), "Should return 4 cargo planes");
+        assertEquals(5, cargoPlanes.size(), "Should return 5 cargo planes");
     }
 
     @Test
